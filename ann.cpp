@@ -171,18 +171,12 @@ void Ann::initStructure(char * filename){
 	}
 
 	while(true){
-		if(inFile.peek() == EOF){
-			break;
-		}
 		inFile>>z;
+		if(inFile.eof())
+			break;
 		structure.push_back(z);
 		}
-
-	std::cout<<"structure matrix"<<std::endl;
-	for(unsigned i=0;i<structure.size();i++){
-			std::cout<<structure[i]<<" "<<std::endl;
-	}
-	std::cout<<"--------------"<<std::endl;
+	inFile.close();
 }
 
 void Ann::initTrainInput(char * filename){
@@ -214,14 +208,7 @@ void Ann::initTrainInput(char * filename){
 	    temp.clear();
 
 		}
-	std::cout<<"Train input matrix"<<std::endl;
-	for(unsigned i=0;i<train_inputTable.size();i++){
-		for(unsigned j=0;j<train_inputTable[i].size();j++){
-			std::cout<<train_inputTable[i][j]<<" ";
-		}
-		std::cout<<std::endl;
-	}
-	std::cout<<"--------------"<<std::endl;
+	inFile.close();
 
 
 }
@@ -237,18 +224,13 @@ void Ann::initTrainOutput(char * filename){
 	}
 
 	while(true){
-		if(inFile.peek() == EOF){
-			break;
-		}
 		inFile>>z;
+		if(inFile.eof())
+			break;
 		train_output.push_back(z);
 		}
 
-	std::cout<<"train_output matrix"<<std::endl;
-	for(unsigned i=0;i<train_output.size();i++){
-			std::cout<<train_output[i]<<" "<<std::endl;
-	}
-	std::cout<<"--------------"<<std::endl;
+inFile.close();
 
 }
 
@@ -280,14 +262,7 @@ void Ann::initTestInput(char * filename){
 
 
 		}
-	std::cout<<"test_inputTable matrix"<<std::endl;
-	for(unsigned i=0;i<test_inputTable.size();i++){
-		for(unsigned j=0;j<test_inputTable[i].size();j++){
-			std::cout<<test_inputTable[i][j]<<" ";
-		}
-		std::cout<<std::endl;
-	}
-	std::cout<<"--------------"<<std::endl;
+inFile.close();
 
 
 }
@@ -303,18 +278,13 @@ void Ann::initTestOutput(char * filename){
 	}
 
 	while(true){
-		if(inFile.peek() == EOF){
-			break;
-		}
 		inFile>>z;
+		if(inFile.eof())
+			break;
 		test_output.push_back(z);
 		}
 
-	std::cout<<"test_output matrix"<<std::endl;
-	for(unsigned i=0;i<test_output.size();i++){
-			std::cout<<test_output[i]<<" "<<std::endl;
-	}
-	std::cout<<"--------------"<<std::endl;
+inFile.close();
 
 }
 
@@ -343,6 +313,7 @@ void Ann::initweightTable(char * filename){
 			}
 		}
 	}
+ inFile.close();
 
 	for(int j=1; j<structure.size();j++){
 		for(int i=0;i<structure[j];i++){
@@ -372,14 +343,6 @@ void Ann::initDigitEncoding(){
 	}
 	digit_encoding = out;
 
-	std::cout<<"digit_encoding matrix"<<std::endl;
-	for(unsigned i=0;i<digit_encoding.size();i++){
-		for(unsigned j=0;j<digit_encoding[i].size();j++){
-			std::cout<<digit_encoding[i][j]<<" ";
-		}
-		std::cout<<std::endl;
-	}
-	std::cout<<"--------------"<<std::endl;
 }
 
 void Ann::initError(){
@@ -541,7 +504,7 @@ void Ann::validateTestInput(){
 	for(int i=0;i<total_tests;i++){
 		doForwardPassIteration(test_inputTable,i);
 		digit = findDigit();
-		cout<<"digit : "<<digit<<endl;
+		cout<<digit<<endl;
 
 		if(digit == test_output[i]){
 			correctly_validated++;
@@ -549,113 +512,34 @@ void Ann::validateTestInput(){
 	}
 	accuracy = ((long double) correctly_validated  )/ total_tests;
 
-	cout<<"total : "<<total_tests<<" validated : "<<correctly_validated<<endl;
-	cout<<"accuracy : ";
+	//cout<<"total : "<<total_tests<<" validated : "<<correctly_validated<<endl;
+	//cout<<"accuracy : ";
 	cout << showpoint << fixed << setprecision(12) << accuracy << endl;
 
 }
 
-void Ann::trainWeightsModel(){
+void Ann::trainWeightsModel(int iteration){
 
-	for(int i=0;i<100;i++){
-		doForwardPassIteration(train_inputTable,i);
-		//showOutput();
-		doBackwardPassIteration(train_output,i);
-		//showError();
-		updateWeights();
-		//showWeight();
+	for(int j=0;j<iteration;j++){
+
+		for(int i=0;i<train_inputTable.size();i++){
+			doForwardPassIteration(train_inputTable,i);
+			//showOutput();
+			doBackwardPassIteration(train_output,i);
+			//showError();
+			updateWeights();
+			//showWeight();
+		}
 	}
 
-	std::cout<<"Weight matrix"<<std::endl;
+	//std::cout<<"Weight matrix"<<std::endl;
 
 	for(unsigned i=0;i<structure[1];i++){
-		cout << showpoint << fixed << setprecision(12) << weightTable[1][node[1][i]] << endl;
+		cout << showpoint << fixed << setprecision(12) << weightTable[1][node[1][i]] <<" ";
 	}
-	std::cout<<"--------------"<<std::endl;
+	std::cout<<endl;
 
 }
-
-Ann::Ann(){
-
-	alpha= 0.01;
-	initStructure("structure.txt");
-	initDigitEncoding();
-	initNode();
-	initOutput();
-	initError();
-	//showNode();
-
-	initTrainInput("train_input.txt");
-	initTrainOutput("train_output.txt");
-	initTestInput("test_input.txt");
-	initTestOutput("test_output.txt");
-	initweightTable("weights.txt");
-
-
-
-	//showError();
-	//showWeight();
-	//doForwardPassIteration(train_inputTable,0);
-	//showOutput();
-	//cout<<"digit : "<<findDigit()<<endl;
-
-
-
-
-	trainWeightsModel();
-	validateTestInput();
-
-
-
-	/*
-
-	updateValuesInForwardPass();
-
-
-	cout<<"#######################################"<<endl;
-
-
-	updateErrorsInBackwardPass();
-
-	showError();
-
-
-	cout << showpoint << fixed << setprecision(12) << error[0][0] << endl;
-	cout << showpoint << fixed << setprecision(12) << error[0][1] << endl;
-
-	updateWeights();
-	*/
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 Ann::Ann(  char * train_input_file, char *train_output_file, char * test_input_file, char *test_output_file,
@@ -675,6 +559,7 @@ Ann::Ann(  char * train_input_file, char *train_output_file, char * test_input_f
 	initTestOutput(test_output_file);
 	initweightTable(weight_file);
 
+	//cout<<"Sizes : "<<structure.size()<<": "<<train_inputTable.size()<<" : "<<train_output.size() <<" : "<< test_inputTable.size() <<" : "<<test_output.size()<<endl;
 }
 
 

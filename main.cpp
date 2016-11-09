@@ -24,8 +24,10 @@ print the result for each sensor input in a loop
 */
 int main(int argc, char* argv[]){
 
+  int iterations =0;
   Ann a(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
-  a.trainWeightsModel();
+  iterations = atoi(argv[7]);
+  a.trainWeightsModel(iterations);
   a.validateTestInput();
   //Ann a;
 	return 0;

@@ -71,10 +71,10 @@ private:
 
 
 public:
-	Ann();
+
 	Ann( char *, char *, char *, char *, char *, char *);
 
-	void trainWeightsModel();
+	void trainWeightsModel(int);
 	void validateTestInput();
 
 	void showOutput();
