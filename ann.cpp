@@ -12,6 +12,8 @@
 #include<fstream>
 using namespace std;
 
+//########################################## Utility  Matrix Class ########################
+ 
 /**
 Matrix Default Constructor
 
@@ -108,6 +110,21 @@ void Matrix::set(int row, int col,long double value){
 	_matrix[row][col]=value;
 }
 
+//########################################## End of Utility  Matrix Class ########################
+
+
+//########################################## ANN Class ########################
+/**
+Utility method to calculate Euclidean Distance
+
+for each value in vector 
+	Sum pow(X[i] - Y[i], 2)
+square root of sum gives euclidean distance
+
+@param vector<long double> X
+@param vector<long double> Y
+@return long double euclidean distance
+*/
 long double Ann::getEuclideanDistance(vector<long double> X, vector<long double> Y)
 {
 	long double X_test, Y_test;
@@ -122,6 +139,14 @@ long double Ann::getEuclideanDistance(vector<long double> X, vector<long double>
 	return result;
 }
 
+/**
+Utility method to find digit from output layer 
+
+using digit encoding and euclidean distance function
+finds digit with minimum euclidean distance
+
+@return int digit
+*/
 int Ann::findDigit(){
 	long double minDistance = -1;
 	int minDigit = -1;
@@ -152,6 +177,14 @@ int Ann::findDigit(){
 	return minDigit;
 }
 
+/**
+Utility method to calculate Sigmoid value ( used as activation function)
+
+calculates 1 / (1 + exp(-input) )
+
+@param long double input
+@return long double sigmoid output
+*/
 long double Ann::getSigmoid(long double in){
 	long double exp_value;
 	long double return_value;
@@ -160,6 +193,13 @@ long double Ann::getSigmoid(long double in){
 	 return return_value;
 }
 
+/**
+Function for initializing structure
+
+initilizes neural network Structure by reading from input file.
+@param  filename  Structure input file.
+@return void
+*/
 void Ann::initStructure(char * filename){
 	fstream inFile;   // input file
 	int z;
@@ -179,6 +219,13 @@ void Ann::initStructure(char * filename){
 	inFile.close();
 }
 
+/**
+Function for initializing Training Input
+
+initilizes neural network Training Input by reading from input file.
+@param  filename  Training Input input file.
+@return void
+*/
 void Ann::initTrainInput(char * filename){
 
 	vector<long double> temp;
@@ -213,6 +260,13 @@ void Ann::initTrainInput(char * filename){
 
 }
 
+/**
+Function for initializing Training Output
+
+initilizes neural network Training Output by reading from input file.
+@param  filename  Training Output input file.
+@return void
+*/
 void Ann::initTrainOutput(char * filename){
 	fstream inFile;   // input file
 	int z;
@@ -234,6 +288,13 @@ inFile.close();
 
 }
 
+/**
+Function for initializing Test Input
+
+initilizes neural network Test Input by reading from input file.
+@param  filename  Test Input input file.
+@return void
+*/
 void Ann::initTestInput(char * filename){
 	vector<long double> temp;
 	fstream inFile;   // input file
@@ -267,6 +328,13 @@ inFile.close();
 
 }
 
+/**
+Function for initializing Test Output
+
+initilizes neural network Test Output by reading from input file.
+@param  filename  Test Output input file.
+@return void
+*/
 void Ann::initTestOutput(char * filename){
 	fstream inFile;   // input file
 	int z;
@@ -288,6 +356,13 @@ inFile.close();
 
 }
 
+/**
+Function for initializing neural network Weights 
+
+initilizes neural network Weights by reading from input file.
+@param  filename Weights input file.
+@return void
+*/
 void Ann::initweightTable(char * filename){
 
 	int nodes = 1;
@@ -323,6 +398,12 @@ void Ann::initweightTable(char * filename){
 	}
 }
 
+/**
+Function for initializing Data Structure for storing all Outputs
+
+initializes 2-D vector
+@return void
+*/
 void Ann::initOutput(){
 	std::vector<std::vector<long double> > out;
 	std::vector <int > :: iterator struct_iter;
@@ -333,6 +414,14 @@ void Ann::initOutput(){
 	output = out;
 }
 
+/**
+Function for initializing Data Structure for storing Digit Encoding 
+
+initializes 2-D vector and fills with encoding for digits
+ex; for digit 0 : 0.1 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9
+ex; for digit 1 : 0.9 0.1 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9
+@return void
+*/
 void Ann::initDigitEncoding(){
 
 	std::vector<std::vector<long double> > out(10, std::vector<long double>(10, 0.9));
@@ -345,6 +434,12 @@ void Ann::initDigitEncoding(){
 
 }
 
+/**
+Function for initializing Data Structure for storing all Errors
+
+initializes 2-D vector
+@return void
+*/
 void Ann::initError(){
 
 	std::vector<std::vector<long double> > out;
@@ -356,6 +451,15 @@ void Ann::initError(){
 	error = out;
 }
 
+/**
+Function for initializing Data Structure for storing Node information
+
+initializes 2-D vector for giving node number from layer number and index in that layer
+Ex: node[0][0] =  1; first node in first layer is node 1
+Ex: node[0][1] =  2; second node in first layer is node 2
+
+@return void
+*/
 void Ann::initNode(){
 
 	std::vector<std::vector< int> > out;
@@ -372,6 +476,16 @@ void Ann::initNode(){
 	node = out;
 }
 
+/**
+Function for calculating value of node 
+
+calculates value at node by multiplying weights and values of nodes in previous layer.
+Then, uses activation function to obtain value.
+
+@param  int layer
+@param  int nodeNum index of node in that layer
+@return void
+*/
 void Ann::calculateValueAt(int layer, int nodeNum){
 
 	Matrix matOut(1, output[layer-1].size()+1  );
@@ -398,6 +512,15 @@ void Ann::calculateValueAt(int layer, int nodeNum){
 	//cout << showpoint << fixed << setprecision(12) << output[layer][nodeNum] << endl;
 }
 
+/**
+Function for calculating Error of node 
+
+calculates error at node by multiplying weights and errors of nodes in next layer.
+
+@param  int layer
+@param  int nodeNum index of node in that layer
+@return void
+*/
 void Ann::calculateErrorAt(int layer, int nodeNum){
 
 	Matrix matError(1, output[layer+1].size() );
@@ -425,12 +548,29 @@ void Ann::calculateErrorAt(int layer, int nodeNum){
 
 }
 
+/**
+Function for calculating Error at output layer.
+
+calculates error at output layer node by using a * (1-a) * (y - a)
+
+@param  int layer
+@param  int nodeNum index of node in that layer
+@param  long double outputLayerValue expected 
+@return void
+*/
 void Ann::calculateErrorAtOutputLayer(int layer, int nodeNum, long double outputLayerValue){
 
 	long double calculatedValue = output[layer][nodeNum];
 	error[layer][nodeNum] =  calculatedValue * (1-calculatedValue) * (outputLayerValue - calculatedValue );
 }
 
+/**
+Function for updating  Errors in backward pass
+
+iteratively updates errors from output layer to input layer.
+
+@return void
+*/
 void Ann::updateErrorsInBackwardPass(){
 
 	for(int j=structure.size()-2; j>=0;j--){
@@ -441,6 +581,13 @@ void Ann::updateErrorsInBackwardPass(){
 	}
 }
 
+/**
+Function for updating  values in forward pass
+
+iteratively updates values from input  layer to output layer.
+
+@return void
+*/
 void Ann::updateValuesInForwardPass(){
 
 	for(int j=1; j<structure.size();j++){
@@ -451,6 +598,13 @@ void Ann::updateValuesInForwardPass(){
 	}
 }
 
+/**
+Function for updating neural network weights after single iteration
+
+updates weights using errors of nodes in next layer.
+
+@return void
+*/
 void Ann::updateWeights(){
 
 	for(int j=1; j<structure.size();j++){
@@ -478,6 +632,16 @@ void Ann::updateWeights(){
 
 }
 
+/**
+Function for single forward pass iteration
+
+takes in 2-D vector holding input layer values 
+and performs single iteration of forward pass value calculation. 
+
+@param std::vector< std::vector<long double> > inputlayer 
+@param int number
+@return void
+*/
 void Ann::doForwardPassIteration(std::vector< std::vector<long double> > inputlayer, int number){
 
 	for(int j=0; j<structure[0];j++){
@@ -487,6 +651,16 @@ void Ann::doForwardPassIteration(std::vector< std::vector<long double> > inputla
 
 }
 
+/**
+Function for single backward pass iteration
+
+takes in 2-D vector holding output layer values 
+and performs single iteration of backward pass error calculation. 
+
+@param std::vector< std::vector<long double> > inputlayer 
+@param int number
+@return void
+*/
 void Ann::doBackwardPassIteration(std::vector< int> outputlayer,int number){
 	int digit = outputlayer[number];
 
@@ -497,6 +671,17 @@ void Ann::doBackwardPassIteration(std::vector< int> outputlayer,int number){
 
 }
 
+/**
+Function for validating Test Input
+
+for each test input
+	forward pass
+	find digit by min euclidean distance 
+
+calculate and displays accuracy
+
+@return void
+*/
 void Ann::validateTestInput(){
 	int total_tests = test_inputTable.size(), digit = -1;
 	int correctly_validated = 0;
@@ -518,6 +703,21 @@ void Ann::validateTestInput(){
 
 }
 
+/**
+Function for training Weights of Neural network model
+
+trains neural network 
+for iterations
+	for each training input
+		forward pass
+		backward pass
+		update weights
+
+display trained weights from node 1 to nodes in next layer
+
+@param int iteration - no of times each training model is fed to neural network 
+@return void
+*/
 void Ann::trainWeightsModel(int iteration){
 
 	for(int j=0;j<iteration;j++){
@@ -541,7 +741,21 @@ void Ann::trainWeightsModel(int iteration){
 
 }
 
+/**
+Constructor of ann class
 
+takes the file names as input
+calls init files to initilize required Data sturcutures.
+calls all init methods required for storing input files in memory.
+
+@param char * train_input_file
+@param char *train_output_file
+@param char * test_input_file
+@param char *test_output_file
+@param char * structure_file
+@param char * weight_file
+@return void
+*/
 Ann::Ann(  char * train_input_file, char *train_output_file, char * test_input_file, char *test_output_file,
 		char * structure_file, char * weight_file){
 
@@ -564,7 +778,11 @@ Ann::Ann(  char * train_input_file, char *train_output_file, char * test_input_f
 
 
 
+/**
+Debug Utility method to show Output values
 
+@return void
+*/
 void Ann::showOutput(){
 	std::cout<<"output matrix"<<std::endl;
 	for(unsigned i=0;i<output.size();i++){
@@ -576,6 +794,11 @@ void Ann::showOutput(){
 	std::cout<<"--------------"<<std::endl;
 }
 
+/**
+Debug Utility method to show Error values
+
+@return void
+*/
 void Ann::showError(){
 	std::cout<<"Error matrix"<<std::endl;
 	for(unsigned i=0;i<error.size();i++){
@@ -588,6 +811,11 @@ void Ann::showError(){
 
 }
 
+/**
+Debug Utility method to show Node values
+
+@return void
+*/
 void Ann::showNode(){
 	std::cout<<"Node matrix"<<std::endl;
 	for(unsigned i=0;i<node.size();i++){
@@ -599,6 +827,11 @@ void Ann::showNode(){
 	std::cout<<"--------------"<<std::endl;
 }
 
+/**
+Debug Utility method to show Weight values
+
+@return void
+*/
 void Ann::showWeight(){
 	std::cout<<"Weight matrix"<<std::endl;
 	for(unsigned i=0;i<weightTable.size();i++){
