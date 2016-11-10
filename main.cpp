@@ -15,9 +15,10 @@ using namespace std;
 Driver
 
 takes argument input from command line
-constructs robot object
-print the result for each sensor input in a loop
 
+constructs ANN object
+trains neural netork weight model
+validates test
 
 @param  command line argument
 @return 0
